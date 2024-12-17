@@ -1,0 +1,14 @@
+stages:
+  data_injection:
+    cmd: python src/data/data_injection.py
+    deps:
+    - src/data/data_injection.py
+    params:
+    - data_injection.test_size
+    outs:
+    - data/raw
+    
+  
+  
+
+ 

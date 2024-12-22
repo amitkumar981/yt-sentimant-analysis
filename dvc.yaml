@@ -15,6 +15,18 @@ stages:
     - data/raw/test.csv
     outs:
     - data/interim
+  feature_engineering:
+   cmd: python src/features/feature_engineering.py
+   deps:
+    - src/features/feature_engineering.py
+    - data\interim\train_processed.csv
+    - data\interim\test_processed.csv
+   params:
+    - feature_engineering.ngram_range
+    - feature_engineering.max_features
+   outs:
+    - tfidf_vectorizer.pkl
+
     
   
   

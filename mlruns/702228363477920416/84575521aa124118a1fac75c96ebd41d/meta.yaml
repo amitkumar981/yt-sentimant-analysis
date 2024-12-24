@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/redhu/OneDrive/yt-sentment-analysis/mlruns/702228363477920416/84575521aa124118a1fac75c96ebd41d/artifacts
+end_time: 1735049981777
+entry_point_name: ''
+experiment_id: '702228363477920416'
+lifecycle_stage: active
+run_id: 84575521aa124118a1fac75c96ebd41d
+run_name: smiling-panda-531
+run_uuid: 84575521aa124118a1fac75c96ebd41d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1735049961246
+status: 3
+tags: []
+user_id: redhu

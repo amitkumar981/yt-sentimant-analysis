@@ -1,4 +1,6 @@
 [core]
-    remote = local
+    remote = myremote
 ['remote "local"']
     url = C:\Users\redhu\OneDrive\Desktop
+['remote "myremote"']
+    url = s3://dvcpipline-bucket

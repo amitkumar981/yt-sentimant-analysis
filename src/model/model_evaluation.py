@@ -129,7 +129,7 @@ def main():
         mlflow.set_tracking_uri('http://13.238.159.116:5000/')
 
         # Set MLflow experiment
-        mlflow.set_experiment('dvc_pipeline_runs')
+        mlflow.set_experiment('dvc_pipeline_run')
 
         with mlflow.start_run() as run:
             # Get root directory

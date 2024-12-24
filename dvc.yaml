@@ -40,6 +40,16 @@ stages:
       - model_building.max_depth
     outs:
       - lgbm_model.pkl
+  model_evaluation:
+    cmd: python src/model/model_evaluation.py
+    deps:
+     - data/interim/train_processed.csv
+     - data/interim/test_processed.csv
+     - tfidf_vectorizer.pkl
+     - model/lightgbm_model.pkl
+
+     
+
 
   
   

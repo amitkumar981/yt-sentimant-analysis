@@ -147,6 +147,11 @@ def main():
             vectorizer = load_vectorizer(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
             model = load_model(os.path.join(root_dir, 'lgbm_model.pkl'))
 
+            # Log LightGBM parameters
+            lgbm_params = model.get_params()
+            for key, value in lgbm_params.items():
+                mlflow.log_param(f"lgbm_{key}", value)
+
             # Load data
             test_data = load_data(os.path.join(root_dir, 'data/interim/test_processed.csv'))
 

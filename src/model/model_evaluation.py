@@ -173,9 +173,11 @@ def main():
                 signature=signature,
                 input_example=input_example
             )
+            aritfact_uri=mlflow.get_artifact_uri()
+            model_path=f"{aritfact_uri}/model"
 
             # Save model info
-            model_path = 'model'
+            
             save_model_info(run.info.run_id, model_path, 'experiment_info.json')
 
             # Log vectorizer

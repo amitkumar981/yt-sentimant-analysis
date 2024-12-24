@@ -47,6 +47,9 @@ stages:
      - data/interim/test_processed.csv
      - tfidf_vectorizer.pkl
      - model/lightgbm_model.pkl
+    outs:
+     - experiment_info.json
+
 
      
 

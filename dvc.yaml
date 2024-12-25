@@ -49,6 +49,13 @@ stages:
      - model/lightgbm_model.pkl
     outs:
      - experiment_info.json
+  register_model:
+    cmd: python src\model\register_model.py
+    deps:
+     - src/model/register_model.py
+     - experiment_info.json
+     
+
 
 
      

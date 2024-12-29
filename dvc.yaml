@@ -27,7 +27,7 @@ stages:
       - feature_engineering.ngram_range
       - feature_engineering.max_features
     outs:
-      - tfidf_vectorizer.pkl
+      - data\processed\x_train_tfidf.pkl
 
   model_building:
     cmd: python src/model/model_building.py
@@ -46,7 +46,7 @@ stages:
      - data/interim/train_processed.csv
      - data/interim/test_processed.csv
      - tfidf_vectorizer.pkl
-     - model/lightgbm_model.pkl
+     - lgbm_model.pkl
     outs:
      - experiment_info.json
   register_model:

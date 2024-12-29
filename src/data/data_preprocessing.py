@@ -36,9 +36,10 @@ logger.addHandler(console_handler)
 nltk.download('stopwords')
 nltk.download('wordnet')
 
+
 # Define the preprocessing function
 def preprocess_comment(comment):
-    """Apply preprocessing Transformations on dataset"""
+    """Apply preprocessing transformations to a comment."""
     try:
         # Convert to lowercase
         comment = comment.lower()
@@ -62,15 +63,35 @@ def preprocess_comment(comment):
 
         return comment
     except Exception as e:
-        logger.error('error in preprocessing of comment',e)
-        raise
+        logger.error(f"Error in preprocessing comment: {e}")
+        return comment
+
 def normalize_text(df):
+    """Apply preprocessing to the text data in the dataframe."""
     try:
-        df['clean_comment']=df['clean_comment'].apply(preprocess_comment)
-        logger.debug('text normalization completed')
+        df['clean_comment'] = df['clean_comment'].apply(preprocess_comment)
+        logger.debug('Text normalization completed')
         return df
     except Exception as e:
-        logger.error(f"error while normalization:{e}")
+        logger.error(f"Error during text normalization: {e}")
+        raise
+
+def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str) -> None:
+    """Save the processed train and test datasets."""
+    try:
+        interim_data_path = os.path.join(data_path, 'interim')
+        logger.debug(f"Creating directory {interim_data_path}")
+        
+        os.makedirs(interim_data_path, exist_ok=True)  # Ensure the directory is created
+        logger.debug(f"Directory {interim_data_path} created or already exists")
+
+        train_data.to_csv(os.path.join(interim_data_path, "train_processed.csv"), index=False)
+        test_data.to_csv(os.path.join(interim_data_path, "test_processed.csv"), index=False)
+        
+        logger.debug(f"Processed data saved to {interim_data_path}")
+    except Exception as e:
+        logger.error(f"Error occurred while saving data: {e}")
+        raise
 
 def save_data(train_data:pd.DataFrame,test_data:pd.DataFrame,data_path:str) -> None:
     """Save processed train and test dataframe into root directory"""

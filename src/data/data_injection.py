@@ -71,7 +71,7 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
         #drop duplicates
         df.drop_duplicates(inplace=True)
         #remove white space 
-        df = df[~(df['clean_comment'].str.strip() == '')]
+        df = df[df['clean_comment'].str.strip() != '']
 
         #logging
         logger.debug('Basic preprocessing completed: removed missing values, duplicates, and whitespace from data')

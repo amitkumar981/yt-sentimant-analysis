@@ -26,7 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.text
+          pip install -r requirements.txt
 
       - name: Run pipeline
         env:

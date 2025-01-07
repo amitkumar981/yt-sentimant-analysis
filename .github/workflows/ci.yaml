@@ -102,7 +102,7 @@ jobs:
         run: python testing/prmote_model.py
 
       - name: Start Flask API
-        run: python yt-sentment-analysis\backend\app.py &
+        run: python backend\app.py &
         shell: bash
 
       - name: Wait for Flask API to be ready

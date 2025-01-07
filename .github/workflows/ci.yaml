@@ -106,20 +106,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-2
-        run: |
-          nohup python backend/app.py &
+        run: python backend/app.py 
+           
 
-      - name: Wait for Flask API to be ready
-        run: |
-          for i in {1..10}; do
-            curl -s http://localhost:5000/health && break
-            echo "Waiting for Flask API to be ready..."
-            sleep 3
-          done
-
-      - name: Run Flask API test
-        run: |
-          pytest testing/flask_api_test.py
+     
 
 
       

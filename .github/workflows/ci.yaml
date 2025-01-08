@@ -107,6 +107,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-2
         run:  nohup python backend/app.py 
+      
+      - name: flask api testing
+        run: testing/flask_api_test.py
+        
+          
+        
            
 
      

@@ -101,20 +101,24 @@ jobs:
           AWS_DEFAULT_REGION: ap-southeast-2
         run: python testing/prmote_model.py
 
+      - name: Install Flask
+        run: |
+          pip install flask
+
       - name: Start Flask API
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-2
         run: |
-          nohup python backend/app.py &
+          nohup flask --app backend/app.py run --host=localhost --port=5000 > flask.log 2>&1 &
 
       - name: Wait for Flask API to start
         run: |
           for i in {1..10}; do
             if curl --silent --fail http://localhost:5000/health-check; then
-              echo "Flask API is up!"
-              exit 0
+               echo "Flask API is up!"
+               exit 0
             fi
             echo "Waiting for Flask API..."
             sleep 5
@@ -124,7 +128,13 @@ jobs:
 
       - name: Flask API Testing
         run: |
-          pytest testing/flask_api_test.py
+            pytest testing/flask_api_test.py
+
+      - name: Check Flask API Logs
+        if: failure()
+        run: |
+          cat flask.log
+
 
 
           

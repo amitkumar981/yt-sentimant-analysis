@@ -109,7 +109,7 @@ jobs:
         run:  nohup python backend/app.py &
       
       - name: flask api testing
-        run: testing/flask_api_test.py
+        run: pytest testing/flask_api_test.py
 
           
         

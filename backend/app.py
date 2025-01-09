@@ -64,7 +64,7 @@ def load_model_and_vectorizer(model_name, model_version, vectorizer_path):
     return model, vectorizer
 
 # Initialize the model and vectorizer
-model, vectorizer = load_model_and_vectorizer("plugin_model", "1", "./tfidf_vectorizer.pkl")
+model, vectorizer = load_model_and_vectorizer("plugin_model", "38", "./tfidf_vectorizer.pkl")
 
 @app.route('/')
 def home():
@@ -185,6 +185,123 @@ def generate_chart():
     except Exception as e:
         app.logger.error(f"Error in /generate_chart: {e}")
         return jsonify({"error": f"Chart generation failed: {str(e)}"}), 500
+@app.route('/generate_wordcloud', methods=['POST'])
+def generate_wordcloud():
+    try:
+        data = request.get_json()
+        comments = data.get('comments')
 
+        if not comments:
+            return jsonify({"error": "No comments provided"}), 400
 
+        # Preprocess comments
+        preprocessed_comments = [preprocess_comment(comment) for comment in comments]
 
+        # Combine all comments into a single string
+        text = ' '.join(preprocessed_comments)
+
+        # Generate the word cloud
+        wordcloud = WordCloud(
+            width=800,
+            height=400,
+            background_color='black',
+            colormap='Blues',
+            stopwords=set(stopwords.words('english')),
+            collocations=False
+        ).generate(text)
+
+        # Save the word cloud to a BytesIO object
+        img_io = io.BytesIO()
+        wordcloud.to_image().save(img_io, format='PNG')
+        img_io.seek(0)
+
+        # Return the image as a response
+        return send_file(img_io, mimetype='image/png')
+    except Exception as e:
+        app.logger.error(f"Error in /generate_wordcloud: {e}")
+        return jsonify({"error": f"Word cloud generation failed: {str(e)}"}), 500
+
+@app.route('/generate_trend_graph', methods=['POST'])
+def generate_trend_graph():
+    try:
+        data = request.get_json()
+        sentiment_data = data.get('sentiment_data')
+
+        if not sentiment_data:
+            return jsonify({"error": "No sentiment data provided"}), 400
+
+        # Convert sentiment_data to DataFrame
+        df = pd.DataFrame(sentiment_data)
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+
+        # Set the timestamp as the index
+        df.set_index('timestamp', inplace=True)
+
+        # Ensure the 'sentiment' column is numeric
+        df['sentiment'] = df['sentiment'].astype(int)
+
+        # Map sentiment values to labels
+        sentiment_labels = {-1: 'Negative', 0: 'Neutral', 1: 'Positive'}
+
+        # Resample the data over monthly intervals and count sentiments
+        monthly_counts = df.resample('M')['sentiment'].value_counts().unstack(fill_value=0)
+
+        # Calculate total counts per month
+        monthly_totals = monthly_counts.sum(axis=1)
+
+        # Calculate percentages
+        monthly_percentages = (monthly_counts.T / monthly_totals).T * 100
+
+        # Ensure all sentiment columns are present
+        for sentiment_value in [-1, 0, 1]:
+            if sentiment_value not in monthly_percentages.columns:
+                monthly_percentages[sentiment_value] = 0
+
+        # Sort columns by sentiment value
+        monthly_percentages = monthly_percentages[[-1, 0, 1]]
+
+        # Plotting
+        plt.figure(figsize=(12, 6))
+
+        colors = {
+            -1: 'red',     # Negative sentiment
+            0: 'gray',     # Neutral sentiment
+            1: 'green'     # Positive sentiment
+        }
+
+        for sentiment_value in [-1, 0, 1]:
+            plt.plot(
+                monthly_percentages.index,
+                monthly_percentages[sentiment_value],
+                marker='o',
+                linestyle='-',
+                label=sentiment_labels[sentiment_value],
+                color=colors[sentiment_value]
+            )
+
+        plt.title('Monthly Sentiment Percentage Over Time')
+        plt.xlabel('Month')
+        plt.ylabel('Percentage of Comments (%)')
+        plt.grid(True)
+        plt.xticks(rotation=45)
+
+        # Format the x-axis dates
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+        plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator(maxticks=12))
+
+        plt.legend()
+        plt.tight_layout()
+
+        # Save the trend graph to a BytesIO object
+        img_io = io.BytesIO()
+        plt.savefig(img_io, format='PNG')
+        img_io.seek(0)
+        plt.close()
+
+        # Return the image as a response
+        return send_file(img_io, mimetype='image/png')
+    except Exception as e:
+        app.logger.error(f"Error in /generate_trend_graph: {e}")
+        return jsonify({"error": f"Trend graph generation failed: {str(e)}"}), 500
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

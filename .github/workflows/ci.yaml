@@ -134,7 +134,28 @@ jobs:
         if: failure()
         run: |
           cat flask.log
+      
+      - name: Login to AWS ECR
+        if: success()
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com
 
+      - name: Build Docker image
+        if: success()
+        run: |
+          docker build -t yt-sentiment-analysis .
+
+      - name: Tag Docker image
+        if: success()
+        run: |
+          docker tag yt-sentiment-analysis:latest 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/yt-sentiment-analysis:latest
+
+      - name: Push Docker image to AWS ECR
+        if: success()
+        run: |
+          docker push 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/yt-sentiment-analysis:latest
 
 
           
